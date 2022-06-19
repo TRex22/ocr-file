@@ -61,15 +61,6 @@ module OcrFile
         image_paths
       end
 
-      def fetch_temp_image_paths(pdf_path, save_path, temp_filename, filetype)
-        document = open_pdf(pdf_path, password: '')
-        number_of_pages = document.pages.size
-
-        (1..number_of_pages).map do |page_number|
-          "#{save_path}/#{temp_filename}-#{page_number}.#{filetype}"
-        end
-      end
-
       def merge(documents)
         target = ::HexaPDF::Document.new
 

@@ -29,5 +29,12 @@ module OcrFile
     def open_text_file(path)
       File.read(path)
     end
+
+    def fetch_temp_image_paths(save_path, temp_filename, filetype)
+      filenames = `ls #{save_path} | grep .#{filetype}`.split("\n")
+      filenames.map do |filename|
+        "#{save_path}/#{filename}"
+      end
+    end
   end
 end

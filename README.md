@@ -100,6 +100,8 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 - Base64 encoding
 - requirements checking (installed dependencies etc ...)
 - Tests
+- Configurable temp folder cleanup
+- Improve console output
 
 ### Tests
 To run tests execute:

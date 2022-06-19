@@ -3,6 +3,12 @@ module OcrFile
     module Pdftoppm
       extend self
 
+      # TODO: other options
+      # https://www.xpdfreader.com/pdftoppm-man.html
+      # password
+      # −mono Generate a monochrome PBM file (instead of an RGB PPM file).
+      # −gray Generate a grayscale PGM file (instead of an RGB PPM file).
+      # −cmyk Generate a CMYK PAM file (instead of an RGB PPM file).
       def images_from_pdf(pdf_path, save_path, filename: 'image', filetype: 'png', quality: 100, dpi: 300, verbose: true)
         print 'Generating screenshots of each PDF page ... '
 
@@ -14,8 +20,7 @@ module OcrFile
 
         puts 'Complete!'
 
-        OcrFile::ImageEngines::PdfEngine
-          .fetch_temp_image_paths(pdf_path, save_path, filename, filetype)
+        OcrFile::FileHelpers.fetch_temp_image_paths(save_path, filename, filetype)
       end
     end
   end
