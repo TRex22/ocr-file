@@ -24,6 +24,7 @@ Or install it yourself as:
 
   config = {
     # Images from PDF
+    filetype: 'png',
     quality: 100,
     dpi: 300,
     # Text to PDF

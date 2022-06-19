@@ -3,6 +3,7 @@ module OcrFile
     ACCEPTED_IMAGE_TYPES = ['png', 'jpeg', 'jpg', 'tiff', 'bmp']
     DEFAULT_CONFIG = {
       # Images from PDF
+      filetype: 'png',
       quality: 100,
       dpi: 300,
       # Text to PDF
@@ -135,8 +136,10 @@ module OcrFile
           file_path,
           @temp_folder_path,
           filename: @config[:temp_filename_prefix],
+          filetype: @config[:filetype],
           quality: @config[:quality],
-          dpi: @config[:dpi]
+          dpi: @config[:dpi],
+          verbose: @config[:verbose]
         )
       end
     end
