@@ -13,7 +13,7 @@ module OcrFile
         print 'Generating screenshots of each PDF page ... '
 
         if filetype == 'jpg'
-          `pdftoppm -jpeg -jpegopt quality=#{quality} -r #{dpi} #{pdf_path} #{save_path}/#{filename}`
+          `pdftoppm -jpeg -jpegopt quality=#{quality} -r #{dpi} "#{pdf_path}" "#{save_path}/#{filename}"`
         else
           `pdftoppm -#{filetype} -r #{dpi} #{pdf_path} #{save_path}/#{filename}`
         end

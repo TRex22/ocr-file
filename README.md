@@ -102,6 +102,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 - Tests
 - Configurable temp folder cleanup
 - Improve console output
+- Fix spaces in file names
 
 ### Tests
 To run tests execute:
