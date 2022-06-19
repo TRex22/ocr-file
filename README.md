@@ -61,7 +61,7 @@ You will need to install `tesseract` with your desired language on your system,
   doc.to_pdf # Saves a PDF (either searchable over the images or dumped text)
   doc.to_text # Saves a text file with OCR text
 
-  # How to generate PDFs of images or merge PDFs:
+  # How to generate PDFs of images or text files:
   original_file_path = 'file.txt' OR 'file.png'
 
   doc = OcrFile::Document.new(
@@ -69,6 +69,14 @@ You will need to install `tesseract` with your desired language on your system,
     save_file_path: '/folder-to-save-to/',
     config: config # Not needed as defaults are used when not provided
   )
+
+  doc.to_pdf
+
+  # How to merge files into a single PDF:
+  filepaths = []
+  documents = file_paths.map { |path| OcrFile::ImageEngines::PdfEngine.open_pdf(path, password: '') }
+  merged_document = OcrFile::ImageEngines::PdfEngine.merge(documents)
+  OcrFile::ImageEngines::PdfEngine.save_pdf(merged_document, save_file_path, optimise: true)
 ```
 
 ### Notes / Tips
