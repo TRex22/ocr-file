@@ -8,6 +8,7 @@ module OcrFile
       # Contrast
       # Image Norm
       # Threshold
+      # Conversion of image types
     end
   end
 end

@@ -34,11 +34,13 @@ module OcrFile
         document.write(pdf_save_path, optimize: true)
       end
 
-      def open_pdf(file_path, password: '')
-        HexaPDF::Document.open(file_path, decryption_opts: { password: password })
+      def open_pdf(file, password: '')
+        HexaPDF::Document.open(file, decryption_opts: { password: password })
       end
 
       def extract_images(document, save_path, verbose: false)
+        image_paths = []
+
         HexaPDF::CLI::Images.new.send(:each_image, document) do |image, index, pindex, (_x_ppi, _y_ppi)|
           puts "Processing page: #{pindex} ..."
           info = image.info
@@ -48,10 +50,21 @@ module OcrFile
             image_path = "#{temp_path}/#{image_filename}"
             image.write(image_path)
 
-            ocr_image(type_of_ocr, image_path, text_save_path, pindex: pindex, credentials: credentials)
+            image_paths << image_path
           elsif command_parser.verbosity_warning?
             puts style("Warning (image #{index}, page #{pindex}): PDF image format not supported for writing", RED)
           end
+        end
+
+        image_paths
+      end
+
+      def fetch_temp_image_paths(pdf_path, save_path, temp_filename)
+        document = open_pdf(pdf_path, password: '')
+        number_of_pages = document.pages.size
+
+        (1..number_of_pages).map do |page_number|
+          "#{save_path}/#{temp_filename}-#{page_number}"
         end
       end
 

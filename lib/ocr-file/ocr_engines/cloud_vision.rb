@@ -3,6 +3,16 @@ module OcrFile
     module CloudVision
       extend self
 
+      DEFAULT_LANGUAGE = 'en'
+
+      # Available Types: https://github.com/googleapis/google-cloud-ruby/blob/master/google-cloud-vision/lib/google/cloud/vision/v1/image_annotator_pb.rb
+      TEXT_DETECTION = 'TEXT_DETECTION' # Used for low-quality images
+      DOCUMENT_TEXT_DETECTION = 'DOCUMENT_TEXT_DETECTION' # Used for dense text documents
+
+      def id
+        'cloud-vision'
+      end
+
       def ocr_to_text(file_path, options: { type_of_ocr: '', image_annotator: nil })
         type_of_ocr = options[:type_of_ocr]
         image_annotator = options[:image_annotator]
@@ -13,8 +23,10 @@ module OcrFile
 
       def ocr_to_pdf(file_path, options: { type_of_ocr: '', image_annotator: nil })
         text = ocr_to_text(file_path, options: { type_of_ocr: '', image_annotator: nil })
-        OcrFile::ImageEngines::PdfEngine.pdf_from_text(text)
+        OcrFile::ImageEngines::PdfEngine.pdf_from_text(text, options)
       end
+
+      private
 
       def detect_text(type_of_ocr, image_path, image_annotator)
         if type_of_ocr == 'DOCUMENT_TEXT_DETECTION'
