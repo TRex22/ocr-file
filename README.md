@@ -38,16 +38,18 @@ You will need to install `tesseract` with your desired language on your system,
     text_y: 800,
     minimum_word: 5,
     # Cloud-Vision OCR
+    image_annotator: nil, # Needed for Cloud-Vision
     type_of_ocr: OcrFile::OcrEngines::CloudVision::DOCUMENT_TEXT_DETECTION,
-    # requires image_annotator to be passed through
     ocr_engine: 'tesseract', # 'cloud-vision'
     # Image Pre-Processing
     image_pre_preprocess: true,
     effects: ['bw', 'norm'],
     threshold: 0.25,
+    # PDF to Image Processing
     optimise_pdf: true,
     extract_pdf_images: true, # if false will screenshot each PDF page
     temp_filename_prefix: 'image',
+    # Console Output
     verbose: true,
   }
 

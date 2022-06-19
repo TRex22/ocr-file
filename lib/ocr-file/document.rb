@@ -14,16 +14,18 @@ module OcrFile
       text_y: 800,
       minimum_word: 5,
       # Cloud-Vision OCR
+      image_annotator: nil, # Needed for Cloud-Vision
       type_of_ocr: OcrFile::OcrEngines::CloudVision::DOCUMENT_TEXT_DETECTION,
-      # requires image_annotator to be passed through
       ocr_engine: 'tesseract', # 'cloud-vision'
       # Image Pre-Processing
       image_pre_preprocess: true,
       effects: ['bw', 'norm'],
       threshold: 0.25,
+      # PDF to Image Processing
       optimise_pdf: true,
       extract_pdf_images: true, # if false will screenshot each PDF page
       temp_filename_prefix: 'image',
+      # Console Output
       verbose: true,
     }
 
@@ -37,7 +39,6 @@ module OcrFile
     # save_file_path will also generate a tmp path for tmp files. Expected folder path
     # TODO: Add in more input validation
     def initialize(original_file_path:, save_file_path:, config: DEFAULT_CONFIG)
-
       @original_file_path = original_file_path
       @filename = original_file_path.split('/').last.split('.').first
 
