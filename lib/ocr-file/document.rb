@@ -1,6 +1,7 @@
 module OcrFile
   class Document
     ACCEPTED_IMAGE_TYPES = ['png', 'jpeg', 'jpg', 'tiff', 'bmp']
+    PAGE_BREAK = "\n\r\n" # TODO: Make configurable
     DEFAULT_CONFIG = {
       # Images from PDF
       filetype: 'png',
@@ -80,6 +81,12 @@ module OcrFile
           .save_pdf(merged_pdf, "#{@final_save_file}.pdf", optimise: @config[:optimise_pdf])
 
         close
+      elsif text?
+        text = ::OcrFile::FileHelpers.open_text_file(@original_file_path)
+        pdf_file = OcrFile::ImageEngines::PdfEngine.pdf_from_text(text, @config)
+
+        OcrFile::ImageEngines::PdfEngine
+          .save_pdf(pdf_file, "#{@final_save_file}.pdf", optimise: @config[:optimise_pdf])
       else # is an image
         ocr_image_to_pdf
       end
@@ -92,10 +99,12 @@ module OcrFile
 
         image_paths.each do |image_path|
           text = @ocr_engine.ocr_to_text(image_path, options: @config)
-          ::OcrFile::FileHelpers.append_file("#{@final_save_file}.txt", "#{text}\n\r\n")
+          ::OcrFile::FileHelpers.append_file("#{@final_save_file}.txt", "#{text}#{PAGE_BREAK}")
         end
 
         close
+      elsif text?
+        ::OcrFile::FileHelpers.open_text_file(@original_file_path)
       else # is an image
         ocr_image_to_text(save: true)
       end
@@ -109,11 +118,13 @@ module OcrFile
         text = ''
 
         image_paths.each do |image_path|
-          text = "#{text}\n\r\n#{@ocr_engine.ocr_to_text(image_path, options: @config)}"
+          text = "#{text}#{PAGE_BREAK}#{@ocr_engine.ocr_to_text(image_path, options: @config)}"
         end
 
         close
         text
+      elsif text?
+        ::OcrFile::FileHelpers.open_text_file(@original_file_path)
       else # is an image
         ocr_image_to_text(save: false)
       end

@@ -25,5 +25,9 @@ module OcrFile
     def append_file(path, text)
       File.open(path, 'a') { |file| file.write(text) }
     end
+
+    def open_text_file(path)
+      File.read(path)
+    end
   end
 end

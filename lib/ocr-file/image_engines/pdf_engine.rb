@@ -3,6 +3,8 @@ module OcrFile
     module PdfEngine
       extend self
 
+      PAGE_BREAK = "\n\r\n"
+
       DEFAULT_PAGE_OPTIONS = {
         font: 'Helvetica',
         font_size: 5, #8 # 12
@@ -15,7 +17,7 @@ module OcrFile
         document = ::HexaPDF::Document.new
 
         text
-          .split("\n\n")
+          .split(PAGE_BREAK)
           .reject { |line| line.size < options[:minimum_word] }
           .each { |page_text| document = add_page(document, page_text, options) }
 

@@ -60,10 +60,21 @@ You will need to install `tesseract` with your desired language on your system,
   doc.to_s # Returns text, removes temp files and wont save
   doc.to_pdf # Saves a PDF (either searchable over the images or dumped text)
   doc.to_text # Saves a text file with OCR text
+
+  # How to generate PDFs of images or merge PDFs:
+  original_file_path = 'file.txt' OR 'file.png'
+
+  doc = OcrFile::Document.new(
+    original_file_path: original_file_path, # supports PDFs and images
+    save_file_path: '/folder-to-save-to/',
+    config: config # Not needed as defaults are used when not provided
+  )
 ```
 
 ### Notes / Tips
 Set `extract_pdf_images` to `false` for higher quality OCR. However this will consume more temporary space per PDF page and also be considerably slower.
+
+Image pre-processing is not yet implemented.
 
 ## Development
 
