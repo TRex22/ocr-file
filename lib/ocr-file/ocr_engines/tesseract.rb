@@ -8,14 +8,14 @@ module OcrFile
       end
 
       def ocr_to_text(file_path, options: {})
-        image = RTesseract.new(file_path)
+        image = ::RTesseract.new(file_path)
         image.to_s # Getting the value
       end
 
       def ocr_to_pdf(file_path, options: {})
-        image = RTesseract.new(file_path)
+        image = ::RTesseract.new(file_path)
         raw_output = image.to_pdf  # Getting open file of pdf
-        OcrFile::ImageEngines::PdfEngine.pdf_from_text(raw_output, @config)
+        OcrFile::ImageEngines::PdfEngine.open_pdf(raw_output, password: '')
       end
     end
   end

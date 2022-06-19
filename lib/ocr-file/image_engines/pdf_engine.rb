@@ -12,7 +12,7 @@ module OcrFile
       }
 
       def pdf_from_text(text, options = DEFAULT_PAGE_OPTIONS)
-        document = HexaPDF::Document.new
+        document = ::HexaPDF::Document.new
 
         text
           .split("\n\n")
@@ -31,23 +31,23 @@ module OcrFile
       end
 
       def save_pdf(document, save_file_path, optimise: true)
-        document.write(pdf_save_path, optimize: true)
+        document.write(save_file_path, optimize: true)
       end
 
       def open_pdf(file, password: '')
-        HexaPDF::Document.open(file, decryption_opts: { password: password })
+        ::HexaPDF::Document.open(file, decryption_opts: { password: password })
       end
 
       def extract_images(document, save_path, verbose: false)
         image_paths = []
 
-        HexaPDF::CLI::Images.new.send(:each_image, document) do |image, index, pindex, (_x_ppi, _y_ppi)|
+        ::HexaPDF::CLI::Images.new.send(:each_image, document) do |image, index, pindex, (_x_ppi, _y_ppi)|
           puts "Processing page: #{pindex} ..."
           info = image.info
 
           if info.writable
             image_filename = "#{index}.#{image.info.extension}"
-            image_path = "#{temp_path}/#{image_filename}"
+            image_path = "#{save_path}/#{image_filename}"
             image.write(image_path)
 
             image_paths << image_path
@@ -69,13 +69,13 @@ module OcrFile
       end
 
       def merge(documents)
-        document = HexaPDF::Document.new
+        target = ::HexaPDF::Document.new
 
         documents.each do |document|
           document.pages.each { |page| target.pages << target.import(page) }
         end
 
-        document
+        target
       end
     end
   end

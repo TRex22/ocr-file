@@ -21,7 +21,40 @@ Or install it yourself as:
 ## Usage
 ```ruby
   require 'ocr-file'
-  OcrFile::
+
+  config = {
+    # Images from PDF
+    quality: 100,
+    dpi: 300,
+    # Text to PDF
+    font: 'Helvetica',
+    font_size: 5, #8 # 12
+    text_x: 20,
+    text_y: 800,
+    minimum_word: 5,
+    # Cloud-Vision OCR
+    type_of_ocr: OcrFile::OcrEngines::CloudVision::DOCUMENT_TEXT_DETECTION,
+    # requires image_annotator to be passed through
+    ocr_engine: 'tesseract', # 'cloud-vision'
+    # Image Pre-Processing
+    image_pre_preprocess: true,
+    effects: ['bw', 'norm'],
+    threshold: 0.25,
+    optimise_pdf: true,
+    extract_pdf_images: true, # if false will screenshot each PDF page
+    temp_filename_prefix: 'image',
+    verbose: true,
+  }
+
+  doc = OcrFile::Document.new(
+    original_file_path: '/path-to-original-file/', # supports PDFs and images
+    save_file_path: '/folder-to-save-to/',
+    config: config # Not needed as defaults are used when not provided
+  )
+
+  doc.to_s # Returns text, removes temp files and wont save
+  doc.to_pdf # Saves a PDF (either searchable over the images or dumped text)
+  doc.to_text # Saves a text file with OCR text
 ```
 
 ## Development

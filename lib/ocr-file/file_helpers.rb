@@ -1,5 +1,5 @@
 module OcrFile
-  class FileHelpers
+  module FileHelpers
     extend self
 
     def merge_pdfs(file_paths, save_file_path)

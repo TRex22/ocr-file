@@ -45,7 +45,7 @@ module OcrFile
       @final_save_file = "#{@save_file_path}/#{@filename}-#{date}-#{Time.now.to_i}"
 
       @config = config
-      @ocr_engine = find_ocr_engine(config['ocr_engine'])
+      @ocr_engine = find_ocr_engine(config[:ocr_engine])
     end
 
     def pdf?
@@ -65,12 +65,12 @@ module OcrFile
     def to_pdf
       if pdf?
         create_temp_folder
-        image_paths = extract_image_paths_from_pdf(file_path)
+        image_paths = extract_image_paths_from_pdf(@original_file_path)
 
         pdfs_to_merge = []
 
         image_paths.each do |image_path|
-          pdfs_to_merge << @ocr_engine.ocr_to_pdf(@original_file_path, options: @config)
+          pdfs_to_merge << @ocr_engine.ocr_to_pdf(image_path, options: @config)
         end
 
         merged_pdf = OcrFile::ImageEngines::PdfEngine.merge(pdfs_to_merge)
@@ -87,25 +87,39 @@ module OcrFile
     def to_text
       if pdf?
         create_temp_folder
-        image_paths = extract_image_paths_from_pdf(file_path)
+        image_paths = extract_image_paths_from_pdf(@original_file_path)
 
         image_paths.each do |image_path|
           text = @ocr_engine.ocr_to_text(image_path, options: @config)
-          OcrFile::FileHelpers.append_file("#{@final_save_file}.txt", text)
+          ::OcrFile::FileHelpers.append_file("#{@final_save_file}.txt", "#{text}\n\r\n")
         end
 
         close
       else # is an image
-        ocr_image_to_text
+        ocr_image_to_text(save: true)
       end
     end
 
     def to_s
-      to_text.to_s
+      if pdf?
+        create_temp_folder
+        image_paths = extract_image_paths_from_pdf(@original_file_path)
+
+        text = ''
+
+        image_paths.each do |image_path|
+          text = "#{text}\n\r\n#{@ocr_engine.ocr_to_text(image_path, options: @config)}"
+        end
+
+        close
+        text
+      else # is an image
+        ocr_image_to_text(save: false)
+      end
     end
 
     def close
-      OcrFile::FileHelpers.clear_folder(@temp_folder_path)
+      ::OcrFile::FileHelpers.clear_folder(@temp_folder_path)
     end
 
     private
@@ -130,7 +144,7 @@ module OcrFile
     def create_temp_folder
       # TODO: Make this a bit more robust
       @temp_folder_path = "#{save_file_path}/temp/".gsub(' ', '\ ')
-      OcrFile::FileHelpers.make_directory(@temp_folder_path)
+      ::OcrFile::FileHelpers.make_directory(@temp_folder_path)
     end
 
     def ocr_image_to_pdf
@@ -139,9 +153,14 @@ module OcrFile
         .save_pdf(pdf_document, "#{@final_save_file}.pdf", optimise: @config[:optimise_pdf])
     end
 
-    def ocr_image_to_text
+    def ocr_image_to_text(save: true)
       text = @ocr_engine.ocr_to_text(@original_file_path, options: @config)
-      OcrFile::FileHelpers.append_file("#{@final_save_file}.txt", text)
+
+      if save
+        ::OcrFile::FileHelpers.append_file("#{@final_save_file}.txt", text)
+      else
+        text
+      end
     end
 
     def find_ocr_engine(engine_id)
