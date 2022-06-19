@@ -18,6 +18,10 @@ Or install it yourself as:
 
     $ gem install ocr-file
 
+### Other required dependencies
+You will need to install `tesseract` with your desired language on your system,
+`pdftoppm` needs to be available and also `image-magick`.
+
 ## Usage
 ```ruby
   require 'ocr-file'
@@ -57,6 +61,9 @@ Or install it yourself as:
   doc.to_pdf # Saves a PDF (either searchable over the images or dumped text)
   doc.to_text # Saves a text file with OCR text
 ```
+
+### Notes / Tips
+Set `extract_pdf_images` to `false` for higher quality OCR. However this will consume more temporary space per PDF page and also be considerably slower.
 
 ## Development
 
