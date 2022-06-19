@@ -2,11 +2,11 @@ PATH
   remote: .
   specs:
     ocr-file (0.0.1)
-      active_attr
-      console-style
-      hexapdf
-      mini_magick
-      rtesseract
+      active_attr (~> 0.15.4)
+      console-style (~> 0.0.1)
+      hexapdf (~> 0.23.0)
+      mini_magick (~> 4.11.0)
+      rtesseract (~> 3.1.2)
 
 GEM
   remote: https://rubygems.org/
@@ -77,7 +77,7 @@ PLATFORMS
 
 DEPENDENCIES
   ocr-file!
-  pry
+  pry (~> 0.14.1)
 
 BUNDLED WITH
    2.3.5
