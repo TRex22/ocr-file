@@ -43,7 +43,7 @@ You will need to install `tesseract` with your desired language on your system,
     ocr_engine: 'tesseract', # 'cloud-vision'
     # Image Pre-Processing
     image_preprocess: true,
-    effects: ['norm', 'despeckle', 'deskew', 'sharpen', 'bw'], # Applies effects as listed
+    effects: ['despeckle', 'deskew', 'sharpen', 'bw'], # Applies effects as listed. 'norm' is also available
     # PDF to Image Processing
     optimise_pdf: true,
     extract_pdf_images: true, # if false will screenshot each PDF page
