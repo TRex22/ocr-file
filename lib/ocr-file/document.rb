@@ -83,8 +83,6 @@ module OcrFile
 
         OcrFile::ImageEngines::PdfEngine
           .save_pdf(merged_pdf, "#{@final_save_file}.pdf", optimise: @config[:optimise_pdf])
-
-        close
       elsif text?
         text = ::OcrFile::FileHelpers.open_text_file(@original_file_path)
         pdf_file = OcrFile::ImageEngines::PdfEngine.pdf_from_text(text, @config)
@@ -94,6 +92,8 @@ module OcrFile
       else # is an image
         ocr_image_to_pdf
       end
+
+      close
     end
 
     def to_text
@@ -105,13 +105,13 @@ module OcrFile
           text = @ocr_engine.ocr_to_text(process_image(image_path), options: @config)
           ::OcrFile::FileHelpers.append_file("#{@final_save_file}.txt", "#{text}#{PAGE_BREAK}")
         end
-
-        close
       elsif text?
         ::OcrFile::FileHelpers.open_text_file(@original_file_path)
       else # is an image
         ocr_image_to_text(save: true)
       end
+
+      close
     end
 
     def to_s
@@ -130,7 +130,10 @@ module OcrFile
       elsif text?
         ::OcrFile::FileHelpers.open_text_file(@original_file_path)
       else # is an image
-        ocr_image_to_text(save: false)
+        text = ocr_image_to_text(save: false)
+
+        close
+        text
       end
     end
 
