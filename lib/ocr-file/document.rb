@@ -23,6 +23,7 @@ module OcrFile
       # Image Pre-Processing
       image_preprocess: true,
       effects: ['despeckle', 'deskew', 'enhance', 'sharpen', 'remove_shadow', 'bw'],
+      automatic_reprocess: true,
       # PDF to Image Processing
       optimise_pdf: true,
       extract_pdf_images: true, # if false will screenshot each PDF page
@@ -70,25 +71,9 @@ module OcrFile
     # Trigger OCR pipeline
     def to_pdf
       if pdf?
-        create_temp_folder
-        image_paths = extract_image_paths_from_pdf(@original_file_path)
-
-        pdfs_to_merge = []
-
-        image_paths.each do |image_path|
-          pdfs_to_merge << @ocr_engine.ocr_to_pdf(process_image(image_path), options: @config)
-        end
-
-        merged_pdf = OcrFile::ImageEngines::PdfEngine.merge(pdfs_to_merge)
-
-        OcrFile::ImageEngines::PdfEngine
-          .save_pdf(merged_pdf, "#{@final_save_file}.pdf", optimise: @config[:optimise_pdf])
+        ocr_pdf_to_searchable_pdf
       elsif text?
-        text = ::OcrFile::FileHelpers.open_text_file(@original_file_path)
-        pdf_file = OcrFile::ImageEngines::PdfEngine.pdf_from_text(text, @config)
-
-        OcrFile::ImageEngines::PdfEngine
-          .save_pdf(pdf_file, "#{@final_save_file}.pdf", optimise: @config[:optimise_pdf])
+        ocr_text_to_pdf
       else # is an image
         ocr_image_to_pdf
       end
@@ -98,13 +83,7 @@ module OcrFile
 
     def to_text
       if pdf?
-        create_temp_folder
-        image_paths = extract_image_paths_from_pdf(@original_file_path)
-
-        image_paths.each do |image_path|
-          text = @ocr_engine.ocr_to_text(process_image(image_path), options: @config)
-          ::OcrFile::FileHelpers.append_file("#{@final_save_file}.txt", "#{text}#{PAGE_BREAK}")
-        end
+        ocr_pdf_to_text(save: true)
       elsif text?
         ::OcrFile::FileHelpers.open_text_file(@original_file_path)
       else # is an image
@@ -116,25 +95,15 @@ module OcrFile
 
     def to_s
       if pdf?
-        create_temp_folder
-        image_paths = extract_image_paths_from_pdf(@original_file_path)
-
-        text = ''
-
-        image_paths.each do |image_path|
-          text = "#{text}#{PAGE_BREAK}#{@ocr_engine.ocr_to_text(process_image(image_path), options: @config)}"
-        end
-
-        close
-        text
+        text = ocr_pdf_to_text(save: false)
       elsif text?
-        ::OcrFile::FileHelpers.open_text_file(@original_file_path)
+        text = ::OcrFile::FileHelpers.open_text_file(@original_file_path)
       else # is an image
         text = ocr_image_to_text(save: false)
-
-        close
-        text
       end
+
+      close
+      text
     end
 
     def close
@@ -185,13 +154,55 @@ module OcrFile
       image_processor.convert!
     end
 
+    def ocr_pdf_to_searchable_pdf
+      create_temp_folder
+      image_paths = extract_image_paths_from_pdf(@original_file_path)
+
+      pdfs_to_merge = []
+
+      image_paths.each do |image_path|
+        pdfs_to_merge << @ocr_engine.ocr_to_pdf(process_image(image_path), options: @config)
+      end
+
+      merged_pdf = OcrFile::ImageEngines::PdfEngine.merge(pdfs_to_merge)
+
+      OcrFile::ImageEngines::PdfEngine
+        .save_pdf(merged_pdf, "#{@final_save_file}.pdf", optimise: @config[:optimise_pdf])
+    end
+
+    def ocr_text_to_pdf
+      text = ::OcrFile::FileHelpers.open_text_file(@original_file_path)
+      pdf_file = OcrFile::ImageEngines::PdfEngine.pdf_from_text(text, @config)
+
+      OcrFile::ImageEngines::PdfEngine
+        .save_pdf(pdf_file, "#{@final_save_file}.pdf", optimise: @config[:optimise_pdf])
+    end
+
     def ocr_image_to_pdf
       pdf_document = @ocr_engine.ocr_to_pdf(process_image(@original_file_path), options: @config)
       OcrFile::ImageEngines::PdfEngine
         .save_pdf(pdf_document, "#{@final_save_file}.pdf", optimise: @config[:optimise_pdf])
     end
 
-    def ocr_image_to_text(save: true)
+    def ocr_pdf_to_text(save:)
+      create_temp_folder
+      image_paths = extract_image_paths_from_pdf(@original_file_path)
+
+      text = ''
+
+      image_paths.each do |image_path|
+        text = "#{text}#{PAGE_BREAK}#{@ocr_engine.ocr_to_text(process_image(image_path), options: @config)}"
+      end
+
+      if save
+        ::OcrFile::FileHelpers.append_file("#{@final_save_file}.txt", "#{text}#{PAGE_BREAK}")
+      else
+        text
+      end
+    end
+
+    def ocr_image_to_text(save:)
+      create_temp_folder
       text = @ocr_engine.ocr_to_text(process_image(@original_file_path), options: @config)
 
       if save

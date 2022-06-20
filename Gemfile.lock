@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ocr-file (0.0.2)
+    ocr-file (0.0.4)
       active_attr (~> 0.15.4)
       console-style (~> 0.0.1)
       hexapdf (~> 0.23.0)
