@@ -23,9 +23,9 @@ module OcrFile
       abort "File path, Save Folder Paths, and output type (pdf, txt) are required!" if invalid?
 
       # Using default config for now
-      original_file_path = args.first
-      save_file_path = args.second
-      output_type = args.third
+      original_file_path = args[0]
+      save_file_path = args[1]
+      output_type = args[2]
 
       document = OcrFile::Document.new(original_file_path: original_file_path, save_file_path: save_file_path)
 
