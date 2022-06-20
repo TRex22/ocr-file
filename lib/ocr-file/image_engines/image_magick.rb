@@ -14,9 +14,12 @@ module OcrFile
 
         @temp_path = temp_path
 
-        MiniMagick.configure do |config|
-          config.tmpdir = File.join(Dir.tmpdir, @temp_path)
-        end
+        # Will be available in the next version of MiniMagick > 4.11.0
+        # https://github.com/minimagick/minimagick/pull/541
+        # MiniMagick.configure do |config|
+        #   # cli_version  graphicsmagick?  imagemagick7?  imagemagick? version
+        #   config.tmpdir = File.join(Dir.tmpdir, @temp_path)
+        # end
 
         @image = MiniMagick::Image.open(image_path)
       end
