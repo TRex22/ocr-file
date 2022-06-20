@@ -107,7 +107,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ### TODOs
 - input validation
-- CLI
+- Better CLI
 - image processing
 - password
 - Base64 encoding
@@ -116,6 +116,8 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 - Configurable temp folder cleanup
 - Improve console output
 - Fix spaces in file names
+- Better verbosity
+- Timing
 
 ### Tests
 To run tests execute:
