@@ -1,6 +1,6 @@
 module OcrFile
   module ImageEngines
-    module ImageMagick
+    class ImageMagick
       # TODO:
       # Conversion of image types
       # Rotation and detection of skew
