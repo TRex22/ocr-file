@@ -5,6 +5,7 @@ module OcrFile
 
     ACCEPTED_IMAGE_TYPES = ['png', 'jpeg', 'jpg', 'tiff', 'bmp']
     PAGE_BREAK = "\n\r\n" # TODO: Make configurable
+    EFFECTS_TO_REMOVE = ['', 'norm', 'remove_shadow', 'bw']
     DEFAULT_CONFIG = {
       # Images from PDF
       filetype: 'png',
@@ -70,10 +71,12 @@ module OcrFile
 
     # Trigger OCR pipeline
     def to_pdf
+      find_best_image_processing if config[:automatic_reprocess] && !text?
+
       if pdf?
         ocr_pdf_to_searchable_pdf
       elsif text?
-        ocr_text_to_pdf
+        text_to_pdf
       else # is an image
         ocr_image_to_pdf
       end
@@ -82,32 +85,23 @@ module OcrFile
     end
 
     def to_text
-      if pdf?
-        ocr_pdf_to_text(save: true)
-      elsif text?
-        ::OcrFile::FileHelpers.open_text_file(@original_file_path)
-      else # is an image
-        ocr_image_to_text(save: true)
-      end
+      return ::OcrFile::FileHelpers.open_text_file(@original_file_path) if text?
 
+      find_best_image_processing(save: true)
       close
     end
 
     def to_s
-      if pdf?
-        text = ocr_pdf_to_text(save: false)
-      elsif text?
-        text = ::OcrFile::FileHelpers.open_text_file(@original_file_path)
-      else # is an image
-        text = ocr_image_to_text(save: false)
-      end
+      return ::OcrFile::FileHelpers.open_text_file(@original_file_path) if text?
+
+      text = find_best_image_processing(save: false)
 
       close
       text
     end
 
     def close
-      ::OcrFile::FileHelpers.clear_folder(@temp_folder_path)
+      # ::OcrFile::FileHelpers.clear_folder(@temp_folder_path)
     end
 
     private
@@ -170,7 +164,7 @@ module OcrFile
         .save_pdf(merged_pdf, "#{@final_save_file}.pdf", optimise: @config[:optimise_pdf])
     end
 
-    def ocr_text_to_pdf
+    def text_to_pdf
       text = ::OcrFile::FileHelpers.open_text_file(@original_file_path)
       pdf_file = OcrFile::ImageEngines::PdfEngine.pdf_from_text(text, @config)
 
@@ -179,6 +173,8 @@ module OcrFile
     end
 
     def ocr_image_to_pdf
+      find_best_image_processing if config[:automatic_reprocess]
+
       pdf_document = @ocr_engine.ocr_to_pdf(process_image(@original_file_path), options: @config)
       OcrFile::ImageEngines::PdfEngine
         .save_pdf(pdf_document, "#{@final_save_file}.pdf", optimise: @config[:optimise_pdf])
@@ -207,6 +203,34 @@ module OcrFile
 
       if save
         ::OcrFile::FileHelpers.append_file("#{@final_save_file}.txt", text)
+      else
+        text
+      end
+    end
+
+    def ocr_file_to_text(save:)
+      if pdf? &&
+        ocr_pdf_to_text(save: save)
+      else # is an image
+        ocr_image_to_text(save: save)
+      end
+    end
+
+    def find_best_image_processing(save:)
+      ocr_file_to_text(save: save) if !config[:automatic_reprocess]
+
+      text = ''
+      effects_to_test = [''] + (EFFECTS_TO_REMOVE - (EFFECTS_TO_REMOVE - config[:effects]))
+      effects_to_test.each do |effect|
+        config[:effects] = config[:effects] - [effect]
+
+        text = ocr_file_to_text(save: false)
+        break if OcrFile::TextEngines::ResultProcessor.new(text).valid_words?
+      end
+
+      # Adds in extra operations which is unfortunately inefficient
+      if save
+        ocr_file_to_text(save: save)
       else
         text
       end
