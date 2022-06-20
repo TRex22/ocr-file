@@ -46,6 +46,10 @@ module OcrFile
         @image.auto_threshold("otsu")
       end
 
+      def enhance
+        @image.enhance
+      end
+
       def norm
         @image.equalize
       end
