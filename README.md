@@ -43,7 +43,7 @@ You will need to install `tesseract` with your desired language on your system,
     ocr_engine: 'tesseract', # 'cloud-vision'
     # Image Pre-Processing
     image_preprocess: true,
-    effects: ['despeckle', 'deskew', 'enhance', 'sharpen', 'bw'], # Applies effects as listed. 'norm' is also available
+    effects: ['despeckle', 'deskew', 'enhance', 'sharpen', 'remove_shadow', 'bw'], # Applies effects as listed. 'norm' is also available
     # PDF to Image Processing
     optimise_pdf: true,
     extract_pdf_images: true, # if false will screenshot each PDF page
@@ -83,7 +83,7 @@ You will need to install `tesseract` with your desired language on your system,
 ### Notes / Tips
 Set `extract_pdf_images` to `false` for higher quality OCR. However this will consume more temporary space per PDF page and also be considerably slower.
 
-Image pre-processing only thresholds (bw), normalises the colour space, removes speckles and tries to straighten the image. Will make the end result Black and White but have far more accurate OCR (PDFs). The order of operations is important, but steps can be removed when necessary.
+Image pre-processing only thresholds (bw), normalises the colour space, removes speckles, removes shadows and tries to straighten the image. Will make the end result Black and White but have far more accurate OCR (PDFs). The order of operations is important, but steps can be removed when necessary. Expanding the colour dynamic range with `'norm'` can also be done but isn't recommended.
 
 ### Simple CLI
 Once installed you can use `ocr-file` as a CLI. Its currently a reduced set of options. These are subject to change in future versions

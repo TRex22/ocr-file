@@ -22,7 +22,7 @@ module OcrFile
       ocr_engine: 'tesseract', # 'cloud-vision'
       # Image Pre-Processing
       image_preprocess: true,
-      effects: ['despeckle', 'deskew', 'enhance', 'sharpen', 'bw'],
+      effects: ['despeckle', 'deskew', 'enhance', 'sharpen', 'remove_shadow', 'bw'],
       # PDF to Image Processing
       optimise_pdf: true,
       extract_pdf_images: true, # if false will screenshot each PDF page

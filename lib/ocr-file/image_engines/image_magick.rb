@@ -61,6 +61,13 @@ module OcrFile
         @image.sharpen('0x4') # radiusXsigma
       end
 
+      # https://github.com/ImageMagick/ImageMagick/discussions/4145
+      def remove_shadow
+        @image.negate
+        @image.lat("20x20+10\%")
+        @image.negate
+      end
+
       def deskew
         @image.deskew('40%') # threshold recommended in the docs
       end
