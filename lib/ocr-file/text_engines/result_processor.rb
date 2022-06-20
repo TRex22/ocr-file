@@ -11,7 +11,7 @@ module OcrFile
       DUPLICATE_WORDS = /\b(\w+)\s+\1\b/
       EVERYTHING_BUT_CHARACTERS = /[^\w\s]|(\d)/
 
-      attr_reader :text, :clear_text, :clear_words
+      attr_reader :text, :clear_text
 
       def initialize(text)
         @text = text
@@ -26,14 +26,18 @@ module OcrFile
           unidentified_words <= ACCEPTABLE_UNIDENTIFIED_WORDS
       end
 
+      def invalid_words?
+        !valid_words?
+      end
+
       def word_count
-        return 0 if clear_text.nil?
-        @_word_count ||= clear_text.split(' ').size
+        return 0 if empty_text?
+        @_word_count ||= clear_words.size
       end
 
       def word_size_average
-        return 0 if clear_text.nil?
-        @_word_size_average ||= clear_text.split(' ').map(&:size).sum / word_count
+        return 0 if empty_text?
+        @_word_size_average ||= clear_words.map(&:size).sum / word_count
       end
 
       # Assume English
@@ -43,8 +47,12 @@ module OcrFile
 
       private
 
+      def empty_text?
+        clear_text.nil? || clear_text == ''
+      end
+
       def clear_words
-        @_clear_words ||= clear_text.gsub(EVERYTHING_BUT_CHARACTERS, '').split(' ')
+        @clear_words ||= clear_text.gsub(EVERYTHING_BUT_CHARACTERS, '').split(' ')
       end
 
       def generate_clear_text

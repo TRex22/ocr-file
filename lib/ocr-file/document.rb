@@ -243,13 +243,25 @@ module OcrFile
       ocr_file_to_text(save: save) if !config[:automatic_reprocess]
 
       text = ''
+      best_text = ''
+      best_effects = config[:effects]
 
       effects_to_test = [''] + (EFFECTS_TO_REMOVE - (EFFECTS_TO_REMOVE - config[:effects]))
       effects_to_test.each do |effect|
-        config[:effects] = config[:effects] - [effect]
+        text = test_ocr_settings(effect)
 
-        text = ocr_file_to_text(save: false)
+        if text.size > best_text.size
+          best_text = text
+          best_effects = config[:effects]
+        end
+
         break if OcrFile::TextEngines::ResultProcessor.new(text).valid_words?
+      end
+
+      # Fallback
+      if OcrFile::TextEngines::ResultProcessor.new(text).invalid_words?
+        config[:effects] = best_effects
+        text = ocr_file_to_text(save: false)
       end
 
       # Adds in extra operations which is unfortunately inefficient
@@ -258,6 +270,11 @@ module OcrFile
       else
         text
       end
+    end
+
+    def test_ocr_settings(effect)
+      config[:effects] = config[:effects] - [effect]
+      ocr_file_to_text(save: false)
     end
 
     def print_time
