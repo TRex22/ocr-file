@@ -169,7 +169,9 @@ module OcrFile
     def process_image(path)
       return path unless @config[:image_preprocess]
 
+      create_temp_folder
       save_file_path = "#{@temp_folder_path}/#{Time.now.to_i}.#{@config[:filetype]}"
+
       image_processor = OcrFile::ImageEngines::ImageMagick.new(
         image_path: path,
         temp_path: @temp_folder_path,
