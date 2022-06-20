@@ -76,7 +76,7 @@ module OcrFile
     # Trigger OCR pipeline
     def to_pdf
       @start_time = Time.now
-      find_best_image_processing if config[:automatic_reprocess] && !text?
+      find_best_image_processing(save: false) if config[:automatic_reprocess] && !text?
 
       if pdf?
         ocr_pdf_to_searchable_pdf
@@ -183,7 +183,7 @@ module OcrFile
 
     def text_to_pdf
       text = ::OcrFile::FileHelpers.open_text_file(@original_file_path)
-      text = Spellchecker.correct(text) if config[:spelling_correction]
+      text = OcrFile::TextEngines::ResultProcessor.new(text).correct if config[:spelling_correction]
 
       pdf_file = OcrFile::ImageEngines::PdfEngine.pdf_from_text(text, @config)
 
@@ -192,7 +192,7 @@ module OcrFile
     end
 
     def ocr_image_to_pdf
-      find_best_image_processing if config[:automatic_reprocess]
+      find_best_image_processing(save: false) if config[:automatic_reprocess]
 
       pdf_document = @ocr_engine.ocr_to_pdf(process_image(@original_file_path), options: @config)
       OcrFile::ImageEngines::PdfEngine
@@ -207,7 +207,7 @@ module OcrFile
 
       image_paths.each do |image_path|
         text = @ocr_engine.ocr_to_text(process_image(image_path), options: @config)
-        text = Spellchecker.correct(text) if config[:spelling_correction]
+        text = OcrFile::TextEngines::ResultProcessor.new(text).correct if config[:spelling_correction]
         text = "#{text}#{PAGE_BREAK}#{text}"
       end
 
@@ -222,7 +222,7 @@ module OcrFile
       create_temp_folder
 
       text = @ocr_engine.ocr_to_text(process_image(@original_file_path), options: @config)
-      text = Spellchecker.correct(text) if config[:spelling_correction]
+      text = OcrFile::TextEngines::ResultProcessor.new(text).correct if config[:spelling_correction]
 
       if save
         ::OcrFile::FileHelpers.append_file("#{@final_save_file}.txt", text)

@@ -7,7 +7,7 @@ module OcrFile
 
       # REGEX
       ASCII_ONLY = /[^\u{0000}-\u{007f}]/
-      NOISE_CHARACTERS = /[^\w\s\/-]/
+      NOISE_CHARACTERS = /[^\w\s\/-;:]/
       DUPLICATE_WORDS = /\b(\w+)\s+\1\b/
       EVERYTHING_BUT_CHARACTERS = /[^\w\s]|(\d)/
 
@@ -16,6 +16,10 @@ module OcrFile
       def initialize(text)
         @text = text
         @clear_text = generate_clear_text
+      end
+
+      def correct
+        Spellchecker.correct(text.gsub(NOISE_CHARACTERS, '')).gsub("\n ", "\n").strip
       end
 
       # This is a very naive way of determining if we should re-do OCR with
