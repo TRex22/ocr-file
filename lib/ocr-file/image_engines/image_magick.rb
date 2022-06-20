@@ -36,6 +36,7 @@ module OcrFile
 
       def save!
         image.write(@save_file_path)
+        @save_file_path
       end
 
       # Effects
