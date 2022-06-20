@@ -9,6 +9,9 @@ module OcrFile
       # Image Norm
       # Threshold
       # Conversion of image types
+      # Rotation and detection of skew
+
+
     end
   end
 end

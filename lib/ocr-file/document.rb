@@ -157,8 +157,9 @@ module OcrFile
     end
 
     def create_temp_folder
-      # TODO: Make this a bit more robust
-      @temp_folder_path = "#{save_file_path}/temp/".gsub(' ', '\ ')
+      date = Time.now.to_s.split(' ').first
+
+      @temp_folder_path = "#{save_file_path}/temp-#{date}/".gsub(' ', '\ ')
       ::OcrFile::FileHelpers.make_directory(@temp_folder_path)
     end
 
