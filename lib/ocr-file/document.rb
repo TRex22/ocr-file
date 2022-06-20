@@ -243,19 +243,20 @@ module OcrFile
       ocr_file_to_text(save: save) if !config[:automatic_reprocess]
 
       text = ''
-      best_text = ''
+      best_text_count = 0
       best_effects = config[:effects]
 
       effects_to_test = [''] + (EFFECTS_TO_REMOVE - (EFFECTS_TO_REMOVE - config[:effects]))
       effects_to_test.each do |effect|
         text = test_ocr_settings(effect)
+        processed_result = OcrFile::TextEngines::ResultProcessor.new(text)
 
-        if text.size > best_text.size
+        if processed_result.count_of_issues <= best_text_count
           best_text = text
           best_effects = config[:effects]
         end
 
-        break if OcrFile::TextEngines::ResultProcessor.new(text).valid_words?
+        break if processed_result.valid_words?
       end
 
       # Fallback

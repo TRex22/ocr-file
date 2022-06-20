@@ -26,8 +26,8 @@ module OcrFile
       # shifted options
       def valid_words?
         word_size_average >= MINIMUM_WORD_LENGTH &&
-          Spellchecker.check(clear_text).count <= ACCEPTABLE_NUMBER_OF_ERRORS &&
-          unidentified_words <= ACCEPTABLE_UNIDENTIFIED_WORDS
+          spelling_error_count <= ACCEPTABLE_NUMBER_OF_ERRORS &&
+          unidentified_word_count <= ACCEPTABLE_UNIDENTIFIED_WORDS
       end
 
       def invalid_words?
@@ -45,8 +45,16 @@ module OcrFile
       end
 
       # Assume English
-      def unidentified_words
+      def unidentified_word_count
         clear_words.reject { |word| Spellchecker::Dictionaries::EnglishWords.include?(word) }.count
+      end
+
+      def spelling_error_count
+        Spellchecker.check(clear_text).count
+      end
+
+      def count_of_issues
+        spelling_error_count + unidentified_word_count
       end
 
       private
