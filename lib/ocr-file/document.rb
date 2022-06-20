@@ -252,7 +252,7 @@ module OcrFile
         processed_result = OcrFile::TextEngines::ResultProcessor.new(text)
 
         if processed_result.count_of_issues <= best_text_count
-          best_text = text
+          best_text_count = processed_result.count_of_issues
           best_effects = config[:effects]
         end
 
