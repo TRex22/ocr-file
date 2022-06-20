@@ -2,4 +2,4 @@
 
 require 'ocr-file'
 
-puts "Hello, world!"
+OcrFile::Cli.new(ARGV).call

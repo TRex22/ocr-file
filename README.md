@@ -85,6 +85,20 @@ Set `extract_pdf_images` to `false` for higher quality OCR. However this will co
 
 Image pre-processing only thresholds (bw), normalises the colour space, removes speckles and tries to straighten the image. Will make the end result Black and White but have far more accurate OCR (PDFs). The order of operations is important, but steps can be removed when necessary.
 
+### Simple CLI
+Once installed you can use `ocr-file` as a CLI. Its currently a reduced set of options. These are subject to change in future versions
+
+```
+# Basic Usage with console output
+ocr-file input_file_path output_folder_path
+
+# Output to PDF
+ocr-file input_file_path output_folder_path pdf
+
+# Output to TXT
+ocr-file input_file_path output_folder_path txt
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
