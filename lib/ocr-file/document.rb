@@ -1,5 +1,8 @@
 module OcrFile
   class Document
+    # TODO: Skewness / text orientation detection
+    # TODO: Better handwriting analysis
+
     ACCEPTED_IMAGE_TYPES = ['png', 'jpeg', 'jpg', 'tiff', 'bmp']
     PAGE_BREAK = "\n\r\n" # TODO: Make configurable
     DEFAULT_CONFIG = {
@@ -18,9 +21,8 @@ module OcrFile
       type_of_ocr: OcrFile::OcrEngines::CloudVision::DOCUMENT_TEXT_DETECTION,
       ocr_engine: 'tesseract', # 'cloud-vision'
       # Image Pre-Processing
-      image_pre_preprocess: true,
-      effects: ['bw', 'norm'],
-      threshold: 0.25,
+      image_preprocess: true,
+      effects: ['norm', 'despeckle', 'deskew', 'sharpen', 'bw'],
       # PDF to Image Processing
       optimise_pdf: true,
       extract_pdf_images: true, # if false will screenshot each PDF page
@@ -65,6 +67,7 @@ module OcrFile
       !pdf? && !image?
     end
 
+    # Trigger OCR pipeline
     def to_pdf
       if pdf?
         create_temp_folder
@@ -73,7 +76,7 @@ module OcrFile
         pdfs_to_merge = []
 
         image_paths.each do |image_path|
-          pdfs_to_merge << @ocr_engine.ocr_to_pdf(image_path, options: @config)
+          pdfs_to_merge << @ocr_engine.ocr_to_pdf(process_image(image_path), options: @config)
         end
 
         merged_pdf = OcrFile::ImageEngines::PdfEngine.merge(pdfs_to_merge)
@@ -99,7 +102,7 @@ module OcrFile
         image_paths = extract_image_paths_from_pdf(@original_file_path)
 
         image_paths.each do |image_path|
-          text = @ocr_engine.ocr_to_text(image_path, options: @config)
+          text = @ocr_engine.ocr_to_text(process_image(image_path), options: @config)
           ::OcrFile::FileHelpers.append_file("#{@final_save_file}.txt", "#{text}#{PAGE_BREAK}")
         end
 
@@ -119,7 +122,7 @@ module OcrFile
         text = ''
 
         image_paths.each do |image_path|
-          text = "#{text}#{PAGE_BREAK}#{@ocr_engine.ocr_to_text(image_path, options: @config)}"
+          text = "#{text}#{PAGE_BREAK}#{@ocr_engine.ocr_to_text(process_image(image_path), options: @config)}"
         end
 
         close
@@ -163,14 +166,28 @@ module OcrFile
       ::OcrFile::FileHelpers.make_directory(@temp_folder_path)
     end
 
+    def process_image(path)
+      return path unless @config[:image_preprocess]
+
+      save_file_path = "#{@temp_folder_path}/#{Time.now.to_i}.#{@config[:filetype]}"
+      image_processor = OcrFile::ImageEngines::ImageMagick.new(
+        image_path: path,
+        temp_path: @temp_folder_path,
+        save_file_path: save_file_path,
+        config: @config
+      )
+
+      image_processor.convert.save
+    end
+
     def ocr_image_to_pdf
-      pdf_document = @ocr_engine.ocr_to_pdf(@original_file_path, options: @config)
+      pdf_document = @ocr_engine.ocr_to_pdf(process_image(@original_file_path), options: @config)
       OcrFile::ImageEngines::PdfEngine
         .save_pdf(pdf_document, "#{@final_save_file}.pdf", optimise: @config[:optimise_pdf])
     end
 
     def ocr_image_to_text(save: true)
-      text = @ocr_engine.ocr_to_text(@original_file_path, options: @config)
+      text = @ocr_engine.ocr_to_text(process_image(@original_file_path), options: @config)
 
       if save
         ::OcrFile::FileHelpers.append_file("#{@final_save_file}.txt", text)

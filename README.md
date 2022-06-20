@@ -42,9 +42,8 @@ You will need to install `tesseract` with your desired language on your system,
     type_of_ocr: OcrFile::OcrEngines::CloudVision::DOCUMENT_TEXT_DETECTION,
     ocr_engine: 'tesseract', # 'cloud-vision'
     # Image Pre-Processing
-    image_pre_preprocess: true,
-    effects: ['bw', 'norm'],
-    threshold: 0.25,
+    image_preprocess: true,
+    effects: ['norm', 'despeckle', 'deskew', 'sharpen', 'bw'], # Applies effects as listed
     # PDF to Image Processing
     optimise_pdf: true,
     extract_pdf_images: true, # if false will screenshot each PDF page
@@ -84,7 +83,7 @@ You will need to install `tesseract` with your desired language on your system,
 ### Notes / Tips
 Set `extract_pdf_images` to `false` for higher quality OCR. However this will consume more temporary space per PDF page and also be considerably slower.
 
-Image pre-processing is not yet implemented.
+Image pre-processing only thresholds (bw), normalises the colour space, removes speckles and tries to straighten the image. Will make the end result Black and White but have far more accurate OCR (PDFs). The order of operations is important, but steps can be removed when necessary.
 
 ## Development
 
