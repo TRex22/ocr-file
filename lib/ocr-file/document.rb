@@ -31,6 +31,7 @@ module OcrFile
       temp_filename_prefix: 'image',
       # Console Output
       verbose: true,
+      timing: true,
     }
 
     attr_reader :original_file_path,
@@ -38,7 +39,9 @@ module OcrFile
       :save_file_path,
       :final_save_file,
       :config,
-      :ocr_engine
+      :ocr_engine,
+      :start_time,
+      :end_time
 
     # save_file_path will also generate a tmp path for tmp files. Expected folder path
     # TODO: Add in more input validation
@@ -71,6 +74,7 @@ module OcrFile
 
     # Trigger OCR pipeline
     def to_pdf
+      @start_time = Time.now
       find_best_image_processing if config[:automatic_reprocess] && !text?
 
       if pdf?
@@ -82,26 +86,38 @@ module OcrFile
       end
 
       close
+
+      @end_time = Time.now
+      print_time
     end
 
     def to_text
+      @start_time = Time.now
       return ::OcrFile::FileHelpers.open_text_file(@original_file_path) if text?
 
       find_best_image_processing(save: true)
       close
+
+      @end_time = Time.now
+      print_time
     end
 
     def to_s
+      @start_time = Time.now
       return ::OcrFile::FileHelpers.open_text_file(@original_file_path) if text?
 
       text = find_best_image_processing(save: false)
 
       close
+
+      @end_time = Time.now
+      print_time
+
       text
     end
 
     def close
-      # ::OcrFile::FileHelpers.clear_folder(@temp_folder_path)
+      ::OcrFile::FileHelpers.clear_folder(@temp_folder_path)
     end
 
     private
@@ -234,6 +250,10 @@ module OcrFile
       else
         text
       end
+    end
+
+    def print_time
+      puts "Total Time: #{end_time-start_time} secs.\n\n" if config[:timing]
     end
 
     def find_ocr_engine(engine_id)

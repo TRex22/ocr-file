@@ -51,6 +51,7 @@ You will need to install `tesseract` with your desired language on your system,
     temp_filename_prefix: 'image',
     # Console Output
     verbose: true,
+    timing: true,
   }
 
   doc = OcrFile::Document.new(
@@ -111,7 +112,6 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 ### TODOs
 - input validation
 - Better CLI
-- image processing
 - password
 - Base64 encoding
 - requirements checking (installed dependencies etc ...)
@@ -120,7 +120,6 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 - Improve console output
 - Fix spaces in file names
 - Better verbosity
-- Timing
 
 ### Tests
 To run tests execute:
