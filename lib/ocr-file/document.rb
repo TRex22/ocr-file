@@ -179,7 +179,7 @@ module OcrFile
         config: @config
       )
 
-      image_processor.convert.save
+      image_processor.convert!
     end
 
     def ocr_image_to_pdf

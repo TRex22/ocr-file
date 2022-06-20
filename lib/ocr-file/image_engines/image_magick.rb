@@ -24,15 +24,17 @@ module OcrFile
         @image = MiniMagick::Image.open(image_path)
       end
 
-      def convert
+      def convert!
         return @image_path unless @config[:image_preprocess]
 
         @config[:effects].each do |effect|
           self.send(effect.to_sym)
         end
+
+        save!
       end
 
-      def save
+      def save!
         image.write(@save_file_path)
       end
 
