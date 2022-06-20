@@ -29,9 +29,9 @@ module OcrFile
 
       document = OcrFile::Document.new(original_file_path: original_file_path, save_file_path: save_file_path)
 
-      if output_type.downcase.include?('pdf')
+      if output_type.to_s.downcase.include?('pdf')
         document.to_pdf
-      elsif output_type.downcase.include?('txt') || output_type.downcase.include?('text')
+      elsif output_type.to_s.downcase.include?('txt') || output_type.to_s.downcase.include?('text')
         document.to_text
       else # Display in console
         puts document.to_s
