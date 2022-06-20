@@ -2,6 +2,7 @@ require 'hexapdf'
 require 'hexapdf/cli/images'
 require 'rtesseract'
 require 'mini_magick'
+require 'ruby-spellchecker'
 
 require 'ocr-file/version'
 

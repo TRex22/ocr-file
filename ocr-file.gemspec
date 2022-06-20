@@ -32,6 +32,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "hexapdf", "~> 0.23.0"
   spec.add_dependency "rtesseract", "~> 3.1.2"
   spec.add_dependency "mini_magick", "~> 4.11.0"
+  spec.add_dependency "ruby-spellchecker", "~> 0.1.5"
 
   # Development Dependencies
   spec.add_development_dependency "pry", "~> 0.14.1"

@@ -1,12 +1,13 @@
 PATH
   remote: .
   specs:
-    ocr-file (0.0.4)
+    ocr-file (0.0.5)
       active_attr (~> 0.15.4)
       console-style (~> 0.0.1)
       hexapdf (~> 0.23.0)
       mini_magick (~> 4.11.0)
       rtesseract (~> 3.1.2)
+      ruby-spellchecker (~> 0.1.5)
 
 GEM
   remote: https://rubygems.org/
@@ -69,6 +70,7 @@ GEM
     rails-html-sanitizer (1.4.3)
       loofah (~> 2.3)
     rtesseract (3.1.2)
+    ruby-spellchecker (0.1.5)
     tzinfo (2.0.4)
       concurrent-ruby (~> 1.0)
 

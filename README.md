@@ -49,6 +49,7 @@ You will need to install `tesseract` with your desired language on your system,
     optimise_pdf: true,
     extract_pdf_images: true, # if false will screenshot each PDF page
     temp_filename_prefix: 'image',
+    spelling_correction: true, # Will attempt to fix text at the end (not used for searchable pdf output)
     # Console Output
     verbose: true,
     timing: true,

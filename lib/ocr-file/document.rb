@@ -29,6 +29,7 @@ module OcrFile
       optimise_pdf: true,
       extract_pdf_images: true, # if false will screenshot each PDF page
       temp_filename_prefix: 'image',
+      spelling_correction: true,
       # Console Output
       verbose: true,
       timing: true,
@@ -182,6 +183,8 @@ module OcrFile
 
     def text_to_pdf
       text = ::OcrFile::FileHelpers.open_text_file(@original_file_path)
+      text = Spellchecker.correct(text) if config[:spelling_correction]
+
       pdf_file = OcrFile::ImageEngines::PdfEngine.pdf_from_text(text, @config)
 
       OcrFile::ImageEngines::PdfEngine
@@ -203,7 +206,9 @@ module OcrFile
       text = ''
 
       image_paths.each do |image_path|
-        text = "#{text}#{PAGE_BREAK}#{@ocr_engine.ocr_to_text(process_image(image_path), options: @config)}"
+        text = @ocr_engine.ocr_to_text(process_image(image_path), options: @config)
+        text = Spellchecker.correct(text) if config[:spelling_correction]
+        text = "#{text}#{PAGE_BREAK}#{text}"
       end
 
       if save
@@ -215,7 +220,9 @@ module OcrFile
 
     def ocr_image_to_text(save:)
       create_temp_folder
+
       text = @ocr_engine.ocr_to_text(process_image(@original_file_path), options: @config)
+      text = Spellchecker.correct(text) if config[:spelling_correction]
 
       if save
         ::OcrFile::FileHelpers.append_file("#{@final_save_file}.txt", text)
@@ -236,6 +243,7 @@ module OcrFile
       ocr_file_to_text(save: save) if !config[:automatic_reprocess]
 
       text = ''
+
       effects_to_test = [''] + (EFFECTS_TO_REMOVE - (EFFECTS_TO_REMOVE - config[:effects]))
       effects_to_test.each do |effect|
         config[:effects] = config[:effects] - [effect]
