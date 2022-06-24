@@ -121,6 +121,11 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 - Improve console output
 - Fix spaces in file names
 - Better verbosity
+- Docker
+- pdftk / pdf merge for text and bookmarks etc ...
+    - https://github.com/tesseract-ocr/tesseract/issues/660
+    - tesseract -c naked_pdf=true
+-
 
 ### Tests
 To run tests execute:
