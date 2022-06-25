@@ -61,11 +61,38 @@ module OcrFile
         image_paths
       end
 
+      def insert_image(document, image_path)
+        canvas = document.pages.add.canvas
+        canvas.image(image_path, at: [0, 0], height: 700)
+      end
+
+      def combine(text, pdf_of_images)
+        return unless pdf_of_images.is_a?(::HexaPDF::Document)
+
+        if text.is_a?(::HexaPDF::Document)
+          pages_of_text = text.pages
+        else # Assume raw text with PAGE_BREAK
+          pages_of_text = text.split(PAGE_BREAK)
+        end
+
+        return unless pages_of_text.size == pdf_of_images.pages.size
+
+        if text.is_a?(::HexaPDF::Document) # Keep the page structure
+
+        else # Just text to embed
+
+        end
+      end
+
       def merge(documents)
         target = ::HexaPDF::Document.new
 
         documents.each do |document|
-          document.pages.each { |page| target.pages << target.import(page) }
+          if document.is_a?(::HexaPDF::Document)
+            document.pages.each { |page| target.pages << target.import(page) }
+          else # Assume an image
+            insert_image(target, document)
+          end
         end
 
         target
