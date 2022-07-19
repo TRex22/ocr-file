@@ -15,7 +15,7 @@ module OcrFile
 
       def initialize(text)
         @text = text
-        @clear_text = generate_clear_text || text
+        @clear_text = generate_clear_text || text || ''
       end
 
       def correct

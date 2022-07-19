@@ -172,6 +172,7 @@ module OcrFile
       pdfs_to_merge = []
 
       image_paths.each do |image_path|
+        puts image_path
         pdfs_to_merge << @ocr_engine.ocr_to_pdf(process_image(image_path), options: @config)
       end
 
@@ -206,7 +207,9 @@ module OcrFile
       text = ''
 
       image_paths.each do |image_path|
-        text = @ocr_engine.ocr_to_text(process_image(image_path), options: @config)
+        puts image_path
+        text = @ocr_engine.ocr_to_text(process_image(image_path), options: @config) || ''
+
         text = OcrFile::TextEngines::ResultProcessor.new(text).correct if config[:spelling_correction]
         text = "#{text}#{PAGE_BREAK}#{text}"
       end
@@ -232,7 +235,7 @@ module OcrFile
     end
 
     def ocr_file_to_text(save:)
-      if pdf? &&
+      if pdf?
         ocr_pdf_to_text(save: save)
       else # is an image
         ocr_image_to_text(save: save)
@@ -240,7 +243,7 @@ module OcrFile
     end
 
     def find_best_image_processing(save:)
-      ocr_file_to_text(save: save) if !config[:automatic_reprocess]
+      ocr_file_to_text(save: save) unless config[:automatic_reprocess]
 
       text = ''
       best_text_count = 0
