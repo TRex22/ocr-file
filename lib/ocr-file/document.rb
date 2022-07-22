@@ -30,9 +30,10 @@ module OcrFile
       extract_pdf_images: true, # if false will screenshot each PDF page
       temp_filename_prefix: 'image',
       spelling_correction: true,
+      keep_files: false,
       # Console Output
       verbose: true,
-      timing: true,
+      timing: true
     }
 
     attr_reader :original_file_path,
@@ -118,6 +119,7 @@ module OcrFile
     end
 
     def close
+      return if keep_files?
       ::OcrFile::FileHelpers.clear_folder(@temp_folder_path)
     end
 
@@ -140,6 +142,10 @@ module OcrFile
           verbose: @config[:verbose]
         )
       end
+    end
+
+    def keep_files?
+      config['keep_files']
     end
 
     def create_temp_folder
