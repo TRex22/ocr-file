@@ -45,6 +45,7 @@ You will need to install `tesseract` with your desired language on your system,
     image_preprocess: true,
     effects: ['despeckle', 'deskew', 'enhance', 'sharpen', 'remove_shadow', 'bw'], # Applies effects as listed. 'norm' is also available
     automatic_reprocess: true, # Will possibly do double + the operations but can produce better results automatically
+    dimensions: [width, height], # Can be nil but will lock the images
     # PDF to Image Processing
     optimise_pdf: true,
     extract_pdf_images: true, # if false will screenshot each PDF page
@@ -81,7 +82,8 @@ You will need to install `tesseract` with your desired language on your system,
   # The files can be images or other PDFs
   file_paths = []
   merged_document = ::HexaPDF::Document.new
-  documents = file_paths.map { |path| OcrFile::ImageEngines::PdfEngine.insert_image(merged_document, path) }
+  dimensions = [width, height] # or nil to maintain dimensions
+  documents = file_paths.map { |path| OcrFile::ImageEngines::PdfEngine.insert_image(merged_document, path, dimensions: dimensions) }
   OcrFile::ImageEngines::PdfEngine.save_pdf(merged_document, save_file_path, optimise: true)
 ```
 

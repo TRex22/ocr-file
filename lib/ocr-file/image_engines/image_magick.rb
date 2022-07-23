@@ -30,6 +30,10 @@ module OcrFile
       def convert!
         return @image_path unless @config[:image_preprocess]
 
+        if @config[:dimensions].is_a?(Array) && @config[:dimensions].size == 2
+          resize(width, height)
+        end
+
         @config[:effects].each do |effect|
           self.send(effect.to_sym)
         end

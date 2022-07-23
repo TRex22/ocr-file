@@ -25,6 +25,7 @@ module OcrFile
       image_preprocess: true,
       effects: ['despeckle', 'deskew', 'enhance', 'sharpen', 'remove_shadow', 'bw'],
       automatic_reprocess: true,
+      dimensions: nil, # width, height. Will lock images to these dimensions
       # PDF to Image Processing
       optimise_pdf: true,
       extract_pdf_images: true, # if false will screenshot each PDF page
