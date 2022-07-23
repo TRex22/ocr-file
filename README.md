@@ -79,9 +79,9 @@ You will need to install `tesseract` with your desired language on your system,
 
   # How to merge files into a single PDF:
   # The files can be images or other PDFs
-  filepaths = []
-  documents = file_paths.map { |path| OcrFile::ImageEngines::PdfEngine.open_pdf(path, password: '') }
-  merged_document = OcrFile::ImageEngines::PdfEngine.merge(documents)
+  file_paths = []
+  merged_document = ::HexaPDF::Document.new
+  documents = file_paths.map { |path| OcrFile::ImageEngines::PdfEngine.insert_image(merged_document, path) }
   OcrFile::ImageEngines::PdfEngine.save_pdf(merged_document, save_file_path, optimise: true)
 ```
 

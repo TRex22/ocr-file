@@ -66,7 +66,7 @@ module OcrFile
 
     def image?
       return false if pdf?
-      ACCEPTED_IMAGE_TYPES.any? { |type| @original_file_path.downcase.include?(".#{type}")}
+      ACCEPTED_IMAGE_TYPES.any? { |type| @original_file_path.downcase.include?(".#{type}") }
     end
 
     # Treat anything which isnt a PDF or image as text

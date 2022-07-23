@@ -5,7 +5,7 @@ module OcrFile
       # Conversion of image types
       # Rotation and detection of skew
 
-      attr_reader :image_path, :image, :temp_path, :save_file_path, :config
+      attr_reader :image_path, :image, :temp_path, :save_file_path, :config, :width, :height
 
       def initialize(image_path:, temp_path:, save_file_path:, config:)
         @image_path = image_path
@@ -22,6 +22,9 @@ module OcrFile
         # end
 
         @image = MiniMagick::Image.open(image_path)
+
+        @width = @image[:width]
+        @height = @image[:height]
       end
 
       def convert!
@@ -37,6 +40,10 @@ module OcrFile
       def save!
         image.write(@save_file_path)
         @save_file_path
+      end
+
+      def resize(width, height)
+        @image.resize("#{width}x#{height}")
       end
 
       # Effects

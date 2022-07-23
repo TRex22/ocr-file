@@ -61,9 +61,24 @@ module OcrFile
         image_paths
       end
 
-      def insert_image(document, image_path)
-        canvas = document.pages.add.canvas
-        canvas.image(image_path, at: [0, 0], height: 700)
+      def insert_image(document, image_path, dimensions: nil)
+        image_processor = OcrFile::ImageEngines::ImageMagick.new(
+          image_path: image_path,
+          temp_path: @temp_folder_path,
+          save_file_path: '',
+          config: @config
+        )
+
+        if dimensions
+          width = dimensions[0]
+          height = dimensions[1]
+        else
+          width = image_processor.width
+          height = image_processor.height
+        end
+
+        page = document.pages.add([0, 0, width, height])
+        page.canvas.image(@image || image_path, at: [0, 0], width: width, height: height)
       end
 
       def combine(text, pdf_of_images)
