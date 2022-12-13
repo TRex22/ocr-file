@@ -49,18 +49,20 @@ GEM
       geom2d (~> 0.3)
     i18n (1.10.0)
       concurrent-ruby (~> 1.0)
-    loofah (2.18.0)
+    loofah (2.19.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     method_source (1.0.0)
     mini_magick (4.11.0)
     minitest (5.16.0)
-    nokogiri (1.13.6-arm64-darwin)
+    nokogiri (1.13.10-arm64-darwin)
+      racc (~> 1.4)
+    nokogiri (1.13.10-x86_64-linux)
       racc (~> 1.4)
     pry (0.14.1)
       coderay (~> 1.1)
       method_source (~> 1.0)
-    racc (1.6.0)
+    racc (1.6.1)
     rack (2.2.4)
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
@@ -76,6 +78,7 @@ GEM
 
 PLATFORMS
   arm64-darwin-20
+  x86_64-linux
 
 DEPENDENCIES
   ocr-file!
