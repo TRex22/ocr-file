@@ -79,6 +79,8 @@ module OcrFile
 
         page = document.pages.add([0, 0, width, height])
         page.canvas.image(@image || image_path, at: [0, 0], width: width, height: height)
+
+        document
       end
 
       def combine(text, pdf_of_images)
